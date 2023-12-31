@@ -1,0 +1,19 @@
+{
+  "name": "bankers-dilemma-server",
+  "version": "1.0.0",
+  "description": "The server application for the Banker's Dilemma Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liAmirali/bankers-dilemma-server.git"
+  },
+  "author": "Amirali Lotfi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liAmirali/bankers-dilemma-server/issues"
+  },
+  "homepage": "https://github.com/liAmirali/bankers-dilemma-server#readme"
+}
