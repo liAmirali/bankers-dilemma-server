@@ -10,7 +10,7 @@ export const startRestAPIServer = () => {
   const app = express();
   const server = createServer(app);
 
-  app.use("/api/v1.0/", rootRouter);
+  app.use("/api/v1/", rootRouter);
 
   server.listen(PORT, () => {
     console.log(`Rest API app started on port ${PORT}.`);
