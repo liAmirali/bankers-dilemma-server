@@ -13,7 +13,7 @@ export const createGame = async (req: Request, res: Response) => {
 
   try {
     queryRes = await postgres.query(
-      `INSERT INTO games (name) VALUES ('${req.body.name}') RETURNING game_id`
+      `INSERT INTO games (name) VALUES ('${req.body.name}') RETURNING game_id;`
     );
 
     if (queryRes && queryRes.rowCount && queryRes.rowCount > 0) {
