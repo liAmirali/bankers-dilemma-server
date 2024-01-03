@@ -20,10 +20,23 @@ export const startWebSocketServer = () => {
     },
   });
 
-  io.on("connection", (socket) => {
+  io.on("connection", (socket): void => {
     console.log("A user connected.", socket.id);
 
     socket.send("Hello!");
+
+    io.on("join_game", (data: JoinGameDataT) => {
+      socket.join(data.gameId.toString());
+    });
+
+    io.on("leave_game", (data: LeaveGameDataT) => {
+      socket.leave(data.gameId.toString());
+    });
+
+    io.on("play", (data: PlayDataT) => {
+      console.log(socket.id, " PLAYED:", data);
+      socket.to(data.gameId.toString()).emit(data.move);
+    });
   });
 
   server.listen(PORT, () => {
