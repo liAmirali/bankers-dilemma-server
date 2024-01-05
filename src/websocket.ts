@@ -67,7 +67,7 @@ export const startWebSocketServer = () => {
 
       // Initializing the player data
       if (gameRooms[data.gameId].playersCount === 2) {
-        socket.send("Game room is full.");
+        socket.send({ message: "Game room is full.", code: 3 });
         return;
       }
       const playerIndex = gameRooms[data.gameId].players[0] === null ? 0 : 1;
@@ -80,7 +80,7 @@ export const startWebSocketServer = () => {
 
       // Player joins the room
       socket.join(data.gameId.toString());
-      socket.send("JOINED");
+      socket.send({ message: "Joined game room " + data.gameId, code: 1 });
 
       console.log("gamePlayers", gameRooms);
 
@@ -105,7 +105,7 @@ export const startWebSocketServer = () => {
 
       // Socket leaves the room
       socket.leave(data.gameId.toString());
-      socket.send("LEFT");
+      socket.send({ message: "Left game room " + data.gameId, code: 2 });
 
       console.log("gamePlayers", gameRooms);
     });

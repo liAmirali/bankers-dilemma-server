@@ -43,3 +43,8 @@ type TurnResultT = {
 };
 
 type MoveOption = "confront" | "cooperate";
+
+type MessageT = {
+  message: string;
+  code: number;
+};
