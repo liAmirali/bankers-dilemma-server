@@ -56,7 +56,7 @@ export const startWebSocketServer = () => {
 
       if (gameRooms[data.gameId].players.length === 2) {
         gameRooms[data.gameId].isStarted = true;
-        socket.to(data.gameId.toString()).emit("start_game");
+        io.in(data.gameId.toString()).emit("start_game");
       }
     });
 
@@ -78,7 +78,7 @@ export const startWebSocketServer = () => {
 
     socket.on("play", (data: PlayDataT) => {
       console.log(socket.id, " PLAYED:", data);
-      socket.to(data.gameId.toString()).emit(data.move);
+      io.in(data.gameId.toString()).emit("results", { move: data.move, sid: socket.id });
     });
 
     console.log("All sockets:", socketIds);
