@@ -6,7 +6,7 @@ type GameT = {
 };
 
 type JoinGameDataT = {
-  gameId: number;
+  gameId: string | number;
 }
 
 type LeaveGameDataT = {

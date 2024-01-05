@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { createServer } from "http";
+import cors from "cors";
 
 import { REST_API_PORT } from "../vars/env-variables";
 import { default as rootRouter } from "./routes";
@@ -12,6 +13,8 @@ export const startRestAPIServer = () => {
   const server = createServer(app);
 
   app.use(bodyParser.json())
+
+  app.use(cors())
 
   app.use("/api/v1/", rootRouter);
 
