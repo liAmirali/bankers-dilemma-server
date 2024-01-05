@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { WEB_SOCKET_PORT } from "../vars/env-variables";
 import { trustedOrigins } from "../vars/constants";
+import { getMyScore } from "./utils/scores";
 
 export const startWebSocketServer = () => {
   const PORT = WEB_SOCKET_PORT;
@@ -131,12 +132,24 @@ export const startWebSocketServer = () => {
         console.log("movesCount:", movesCount);
 
         if (movesCount === 2) {
+          const player1 = gameRooms[data.gameId].players[0]!;
+          const player2 = gameRooms[data.gameId].players[1]!;
+
+          const player1Move: PlayerMoveT = {
+            sid: player1.sid,
+            move: player1.latestMove!,
+            score: getMyScore(player1.latestMove!, player2.latestMove!),
+          };
+
+          const player2Move: PlayerMoveT = {
+            sid: player2.sid,
+            move: player2.latestMove!,
+            score: getMyScore(player2.latestMove!, player1.latestMove!),
+          };
+
           const resultData: TurnResultT = {
             gameId: data.gameId,
-            moves: gameRooms[data.gameId].players.map((player) => ({
-              sid: player!.sid,
-              move: player!.latestMove!,
-            })) as [PlayerMoveT, PlayerMoveT],
+            moves: [player1Move, player2Move],
           };
 
           io.in(data.gameId.toString()).emit("results", resultData);

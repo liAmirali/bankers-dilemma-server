@@ -34,6 +34,7 @@ type GameRoomDetails = {
 type PlayerMoveT = {
   sid: string;
   move: MoveOption;
+  score: number;
 };
 
 type TurnResultT = {
