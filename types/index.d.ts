@@ -7,18 +7,38 @@ type GameT = {
 
 type JoinGameDataT = {
   gameId: string | number;
-}
+};
 
 type LeaveGameDataT = {
   gameId: number;
-}
+};
 
 type PlayDataT = {
-  gameId: number,
-  move: "confront" | "cooperate"
-}
+  gameId: number;
+  sid: string;
+  move: "confront" | "cooperate";
+};
+
+type PlayerDataT = {
+  sid: string;
+  score: number;
+  latestMove: MoveOption | null;
+};
 
 type GameRoomDetails = {
-  players: string[],
-  isStarted: boolean
-}
+  players: [PlayerDataT | null, PlayerDataT | null];
+  isStarted: boolean;
+  playersCount: number;
+};
+
+type PlayerMoveT = {
+  sid: string;
+  move: MoveOption;
+};
+
+type TurnResultT = {
+  gameId: number;
+  moves: [PlayerMoveT, PlayerMoveT];
+};
+
+type MoveOption = "confront" | "cooperate";
