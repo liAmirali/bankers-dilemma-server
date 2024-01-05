@@ -20,28 +20,22 @@ export const startWebSocketServer = () => {
     },
   });
 
-  const gamePlayers: Record<string, string[]> = {};
+  const gameRooms: Record<string, GameRoomDetails> = {};
 
   io.on("connection", async (socket) => {
     const allConnectedSockets = await io.fetchSockets();
     const socketIds = allConnectedSockets.map((s) => s.id);
 
-    console.log("A user connected.", socket.id);
-
-    console.log("All sockets:", socketIds);
-    console.log("*BEFORE* gamePlayers", gamePlayers);
-
     // Handler running before ALL events
     socket.onAny(async () => {
-      console.log("HERE CLEANING UP");
       /**
        * Removing any disconnected user form the game rooms
        * */
-      const allGameRooms = Object.keys(gamePlayers);
-      allGameRooms.forEach((gameRoom) => {
-        if (!gamePlayers[gameRoom]) return;
+      const allGameRoomIds = Object.keys(gameRooms);
+      allGameRoomIds.forEach((gameRoomId) => {
+        if (!gameRooms[gameRoomId]) return;
 
-        gamePlayers[gameRoom] = gamePlayers[gameRoom].filter((playerSID) =>
+        gameRooms[gameRoomId].players = gameRooms[gameRoomId].players.filter((playerSID) =>
           socketIds.includes(playerSID)
         );
       });
@@ -51,22 +45,27 @@ export const startWebSocketServer = () => {
       console.log("JOIN game_id:", data.gameId, "sid:", socket.id);
 
       // Adding the player sid to the game monitor
-      if (!gamePlayers[data.gameId]) gamePlayers[data.gameId] = [];
-      gamePlayers[data.gameId].push(socket.id);
+      if (!gameRooms[data.gameId]) gameRooms[data.gameId] = { players: [], isStarted: false };
+      gameRooms[data.gameId].players.push(socket.id);
 
       // Socket joins the room
       socket.join(data.gameId.toString());
       socket.send("JOINED");
 
-      console.log("gamePlayers", gamePlayers);
+      console.log("gamePlayers", gameRooms);
+
+      if (gameRooms[data.gameId].players.length === 2) {
+        gameRooms[data.gameId].isStarted = true;
+        socket.to(data.gameId.toString()).emit("start_game");
+      }
     });
 
     socket.on("leave_game", (data: LeaveGameDataT) => {
       console.log("**LEAVE game_id:", data.gameId, "sid:", socket.id);
 
       // Removing the player sid to the game monitor
-      if (gamePlayers[data.gameId])
-        gamePlayers[data.gameId] = gamePlayers[data.gameId].filter(
+      if (gameRooms[data.gameId])
+        gameRooms[data.gameId].players = gameRooms[data.gameId].players.filter(
           (player) => player !== socket.id
         );
 
@@ -74,7 +73,7 @@ export const startWebSocketServer = () => {
       socket.leave(data.gameId.toString());
       socket.send("LEFT");
 
-      console.log("gamePlayers", gamePlayers);
+      console.log("gamePlayers", gameRooms);
     });
 
     socket.on("play", (data: PlayDataT) => {
@@ -82,7 +81,7 @@ export const startWebSocketServer = () => {
       socket.to(data.gameId.toString()).emit(data.move);
     });
 
-    console.log("*After* All sockets:", socketIds);
+    console.log("All sockets:", socketIds);
   });
 
   server.listen(PORT, () => {

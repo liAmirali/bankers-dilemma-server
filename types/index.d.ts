@@ -17,3 +17,8 @@ type PlayDataT = {
   gameId: number,
   move: "confront" | "cooperate"
 }
+
+type GameRoomDetails = {
+  players: string[],
+  isStarted: boolean
+}
